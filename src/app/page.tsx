@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
+import google from "../../public/google.svg";
 import logo from "../../public/logo.svg";
+import Button from "./Components/button";
 export default function Home() {
   return (
     <div className="flex h-full w-full">
-
       <div className="ml-10 mt-6 items-start   flex flex-row">
         <Image src={logo} alt="logo" width={70} height={70} />
         <h1 className="text-3xl items-center ml-2 mt-1 font-mono">
@@ -12,19 +14,19 @@ export default function Home() {
           <span className="text-white">tion</span>
         </h1>
       </div>
-      <div className=" flex flex-col  ml-auto mr-40 mb-10 px-2 mt-10 w-96 bg-authContainer rounded-lg border-2">
-        <div className="flex justify-between p-6 items-center w-full ">
-          <h1 className="text-lg  cursor-pointer pb-2  border-b-2  border-b-headingColor px-4">
+      <div className=" flex flex-col  ml-auto mr-40 mb-10 px-10 mt-10 w-auto bg-authContainer rounded-lg border-2">
+        <div className="flex justify-between px-8  py-9  items-center w-full ">
+          <h1 className="text-2xl  cursor-pointer pb-2  border-b-2 font-mono  border-b-headingColor px-4">
             Sign up
           </h1>
-          <h1 className="text-lg  cursor-pointer">
+          <h1 className="text-2xl cursor-pointer font-mono">
             <Link href="/login">Log in</Link>
           </h1>
         </div>
-        <form className="bg-authContainer px-8 rounded  ">
+        <form className="bg-authContainer px-2 rounded  ">
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-4 bg-authContainer w-full focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full focus:border-headingColor  focus:outline-none "
               id="Username"
               placeholder="Username"
               type="text"
@@ -55,7 +57,7 @@ export default function Home() {
 
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-4 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
               id="Email"
               placeholder="Email"
               type="text"
@@ -86,7 +88,7 @@ export default function Home() {
 
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-4 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
               id="Password"
               placeholder=" Your password"
               type="password"
@@ -110,13 +112,27 @@ export default function Home() {
             </div>
           </div>
         </form>
-        <div className="flex items-center px-8" >
+        <div className="flex items-center px-2 text-start text-xs mb-5">
           <input
+            className="mr-2 accent-authContainer bg-gray-700"
+            id="checkbox"
+            name="checkbox"
             type="checkbox"
           ></input>
           <span>
-            I agree to the <span className="text-headingColor">Terms</span> and{" "}
+            I agree to Codetion&apos;s{" "}
+            <span className="text-headingColor">Terms of services</span> and{" "}
+            <span className="text-headingColor">Privacy Policy</span>
           </span>
+        </div>
+        <Button buttonText={"Create an account"} />
+        <div className="flex justify-center w-full mb-4">
+          <button className="flex  items-center border-2  border-headingColor rounded-lg pl-14 py-3 w-full">
+            <Image src={google} alt="google" />
+            <span className="text-lg pl-2 text-white">
+              Continue with Google
+            </span>
+          </button>
         </div>
       </div>
     </div>
