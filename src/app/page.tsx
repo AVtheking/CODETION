@@ -1,37 +1,36 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import google from "../../public/google.svg";
 import logo from "../../public/logo.svg";
-import Button from "./Components/button";
+import Button from "./Components/Button";
 export default function Home() {
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
         <Image src={logo} alt="logo" width={70} height={70} />
-        <h1 className="text-3xl items-center ml-2 mt-1 font-mono">
+        <h1 className="text-3xl items-center ml-2 mt-1 font-mono font-semibold">
           <span className="text-headingColor">Code</span>
           <span className="text-white">tion</span>
         </h1>
       </div>
-      <div className=" flex flex-col  ml-auto mr-40 mb-10 px-10 mt-10 w-auto bg-authContainer rounded-lg border-2">
+      <div className=" flex flex-col  ml-auto mr-60 mb-12 px-10 mt-16  bg-authContainer rounded-lg border-2">
         <div className="flex justify-between px-8  py-9  items-center w-full ">
-          <h1 className="text-2xl  cursor-pointer pb-2  border-b-2 font-mono  border-b-headingColor px-4">
+          <h1 className="text-2xl  cursor-pointer pb-2  border-b-2 font-mono font-medium  border-b-headingColor px-4">
             Sign up
           </h1>
-          <h1 className="text-2xl cursor-pointer font-mono">
+          <h1 className="text-2xl cursor-pointer font-mono font-medium pb-2">
             <Link href="/login">Log in</Link>
           </h1>
         </div>
         <form className="bg-authContainer px-2 rounded  ">
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full focus:border-headingColor  focus:outline-none "
               id="Username"
               placeholder="Username"
               type="text"
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-3 pb-4  flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -57,12 +56,12 @@ export default function Home() {
 
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
               id="Email"
               placeholder="Email"
               type="text"
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-3 pb-4  flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -88,12 +87,12 @@ export default function Home() {
 
           <div className="relative flex items-center">
             <input
-              className="border rounded-md px-9 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
               id="Password"
               placeholder=" Your password"
               type="password"
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-3 pb-4  flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -112,7 +111,7 @@ export default function Home() {
             </div>
           </div>
         </form>
-        <div className="flex items-center px-2 text-start text-xs mb-5">
+        <div className="flex items-center px-2 text-start text-xs mb-10">
           <input
             className="mr-2 accent-authContainer bg-gray-700"
             id="checkbox"
@@ -126,7 +125,7 @@ export default function Home() {
           </span>
         </div>
         <Button buttonText={"Create an account"} />
-        <div className="flex justify-center w-full mb-4">
+        <div className="flex justify-center w-full ">
           <button className="flex  items-center border-2  border-headingColor rounded-lg pl-14 py-3 w-full">
             <Image src={google} alt="google" />
             <span className="text-lg pl-2 text-white">

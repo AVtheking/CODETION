@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         headingColor: "rgba(0, 127, 134, 1)",
         authContainer: "rgba(51, 51, 51, 1)",
+        backgroundColor:"rgba(34, 34, 34, 1)"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
