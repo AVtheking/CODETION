@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import { FieldValues, useForm } from "react-hook-form";
 
-import { useEffect } from "react";
 import * as yup from "yup";
 import google from "../../public/google.svg";
 import logo from "../../public/logo.svg";
@@ -40,25 +39,13 @@ export default function Home() {
     register,
     handleSubmit,
     formState: { errors, isDirty },
-    watch,
-    trigger,
   } = useForm<IFormInput>({ resolver: yupResolver(schema), mode: "onChange" });
-  const watchedValues = watch();
 
   const onSubmit = (data: FieldValues) => {
     console.log("here");
     console.log(data);
   };
-  useEffect(() => { }, [watchedValues, isDirty, trigger]);
-  
 
-//TODO: fix this
-  // const handleInputChange = async (field: keyof IFormInput, value: string) => {
-  //   if (Object.keys(errors).length === 0) {
-  //     // If there are no errors, trigger validation for the specific field
-  //     await trigger(field, value);
-  //   }
-  // };
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
