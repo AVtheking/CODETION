@@ -1,11 +1,17 @@
 "use client";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import Link from "next/link";
+library.add(faEye, faEyeSlash);
+library.add(faEye, faEyeSlash);
 
 import { FieldValues, useForm } from "react-hook-form";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 import * as yup from "yup";
 import google from "../../public/google.svg";
 import logo from "../../public/logo.svg";
@@ -16,6 +22,8 @@ export default function Home() {
     Email: string;
     Password: string;
   };
+
+  const [visible, setVisible] = useState<boolean>(false);
   const schema = yup.object().shape({
     Username: yup
       .string()
@@ -153,9 +161,17 @@ export default function Home() {
               }  focus:outline-none `}
               id="Password"
               placeholder=" Your password"
-              type="password"
+              type={visible ? "text" : "password"}
               // onChange={(e) => handleInputChange("Password",e.target.value)}
             ></input>
+            <span className="relative float-right -top-10 right-2.5 block cursor-pointer">
+              {
+                <FontAwesomeIcon
+                  icon={visible ? "eye-slash" : "eye"}
+                  onClick={() => setVisible(!visible)}
+                />
+              }
+            </span>
             {errors.Password && (
               <p className="text-red-500 text-sm">{errors.Password.message}</p>
             )}
