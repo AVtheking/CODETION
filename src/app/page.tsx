@@ -8,50 +8,54 @@ import Link from "next/link";
 library.add(faEye, faEyeSlash);
 library.add(faEye, faEyeSlash);
 
-import { FieldValues, useForm } from "react-hook-form";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import * as yup from "yup";
+import { FieldValues, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import google from "../../public/google.svg";
+import loadingIcon from "../../public/loading.svg";
 import logo from "../../public/logo.svg";
+import { schema } from "./utils/schema";
 
-export default function Home() {
+export default function SignUp() {
+  const router = useRouter();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
   type IFormInput = {
     Username: string;
     Email: string;
     Password: string;
   };
-
-  const [visible, setVisible] = useState<boolean>(false);
-  const schema = yup.object().shape({
-    Username: yup
-      .string()
-      .required("Username is required")
-      .min(3, "Username must be at least 3 character")
-      .max(15, "Your username is too lengthy.Please limit it to 15 characters")
-      .trim(),
-    Email: yup
-      .string()
-      .required("Email is required")
-      .email("Please enter a valid email")
-      .trim(),
-    Password: yup
-      .string()
-      .required("Password is required")
-      .min(8, "Password must be at least 8 character")
-      .max(40, "Password must be at most 40 character")
-      .trim(),
-  });
+  const baseUrl = "https://codetion.onrender.com/";
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<IFormInput>({ resolver: yupResolver(schema), mode: "onChange" });
 
-  const onSubmit = (data: FieldValues) => {
-    console.log("here");
+  const onSubmit = async (data: FieldValues) => {
     console.log(data);
+    setLoading(true);
+    try {
+      const res = await axios.post(`${baseUrl}api/register/`, {
+        username: data.Username,
+        email: data.Email,
+        password: data.Password,
+      });
+      setLoading(false);
+      console.log(res.data);
+      if (res.data.success) {
+        router.push("/verify_email");
+      }
+    } catch (e: any) {
+      setLoading(false);
+      toast.error(e.response.data.message);
+
+      console.log(e.response.data);
+    }
   };
 
   return (
@@ -167,7 +171,7 @@ export default function Home() {
             <span className="relative float-right -top-10 right-2.5 block cursor-pointer">
               {
                 <FontAwesomeIcon
-                  icon={visible ? "eye-slash" : "eye"}
+                  icon={visible ? "eye" : "eye-slash"}
                   onClick={() => setVisible(!visible)}
                 />
               }
@@ -210,9 +214,13 @@ export default function Home() {
 
           <button
             type="submit"
-            className="bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
+            className="bg-headingColor flex justify-center items-center hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
           >
-            Create an account
+            {loading ? (
+              <Image src={loadingIcon} className="animate-spin" alt="Loading" />
+            ) : (
+              "Create an account"
+            )}
           </button>
 
           <div className="flex justify-center w-full ">

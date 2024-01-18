@@ -3,10 +3,14 @@ import Image from "next/image";
 import logo from "../../../public/logo.svg";
 import Button from "../Components/Button";
 import { OtpInput } from "../Components/OtpInput";
+import Link from "next/link";
+import { useState } from "react";
 export default function Verify() {
   const handleOtpComplete = (otp: string) => {
     console.log(otp);
+
   };
+  const [otpError, setOtpError] = useState<boolean>(false);
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -29,13 +33,15 @@ export default function Verify() {
           Resend OTP
         </div>
         <Button buttonText={"Verify"} />
+        <Link href="/">
         <div className="flex justify-center w-full ">
           <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
             <span className="text-xl font-semibold   text-headingColor">
               Back to Sign Up
             </span>
           </button>
-        </div>
+          </div>
+          </Link>
       </div>
     </div>
   );
