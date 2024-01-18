@@ -1,7 +1,49 @@
+"use client";
+import { baseUrl } from "@/app/utils/constants";
+import { forgetSchema } from "@/app/utils/schema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import loadingIcon from "../../../../public/loading.svg";
 import logo from "../../../../public/logo.svg";
 export default function ForgetPassword() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+  type IFormInput = {
+    Email: string;
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    resolver: yupResolver(forgetSchema),
+    mode: "onChange",
+  });
+  const onSubmit = async (data: IFormInput) => {
+    setLoading(true);
+    console.log(data);
+    try {
+      const res = await axios.post(`${baseUrl}api/password-reset/`, {
+        email: data.Email,
+      });
+      setLoading(false);
+      console.log(res.data);
+      if (res.data.success) {
+        toast.success("OTp sent to your email");
+        router.push("/reset_password");
+      }
+    } catch (e: any) {
+      setLoading(false);
+      toast.error(e.response.data.message);
+      console.log(e.response.data);
+    }
+  };
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -19,15 +61,21 @@ export default function ForgetPassword() {
             <br /> will send you 6-digit code
           </p>
         </div>
-        <form className="bg-authContainer px-2 rounded  ">
-          <div className="relative flex items-center mb-10">
+        <form
+          className="bg-authContainer px-2 rounded  "
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className={`relative ${errors.Email ? "" : "mb-5"} `}>
             <input
-              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              {...register("Email")}
+              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${
+                errors.Email ? "border-red-600" : "focus:border-headingColor"
+              }  focus:outline-none `}
               id="Email"
               placeholder="Email"
               type="text"
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4   flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -50,12 +98,18 @@ export default function ForgetPassword() {
               </svg>
             </div>
           </div>
-
+          {errors.Email && (
+            <p className="text-red-500 text-sm">{errors.Email.message}</p>
+          )}
           <button
             type="submit"
-            className="bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
+            className="flex justify-center items-center bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
           >
-            Send Code
+            {loading ? (
+              <Image src={loadingIcon} alt="loading" width={20} height={20} />
+            ) : (
+              "Send Code"
+            )}
           </button>
           <Link href="/login">
             <div className="flex justify-center w-full ">

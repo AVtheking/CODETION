@@ -38,3 +38,10 @@ export const loginSchema = yup.object().shape({
     )
     .trim(),
 });
+export const forgetSchema = yup.object().shape({
+  Email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email")
+    .trim(),
+});
