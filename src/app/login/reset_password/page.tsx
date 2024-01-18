@@ -1,7 +1,55 @@
+"use client";
+import { baseUrl } from "@/app/utils/constants";
+import { resetSchema } from "@/app/utils/schema";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import logo from "../../../../public/logo.svg";
+
+library.add(faEye, faEyeSlash);
+library.add(faEye, faEyeSlash);
 export default function ResetPassword() {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  type IFormInput = {
+    Password: string;
+    ConfirmPassword: string;
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    resolver: yupResolver(resetSchema),
+    mode: "onChange",
+  });
+
+  const onSubmit = async (data: IFormInput) => {
+    setLoading(true);
+    console.log(data);
+    try {
+      const res = await axios.post(`${baseUrl}api//`, {
+        password: data.Password,
+      });
+      setLoading(false);
+      console.log(res.data);
+      if (res.data.success) {
+        toast.success("Login successfully");
+      }
+    } catch (e: any) {
+      setLoading(false);
+      toast.error(e.response.data.message);
+      console.log(e.response.data);
+    }
+    // setLoading(false);
+  };
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -13,18 +61,31 @@ export default function ResetPassword() {
       </div>
       <div className=" flex flex-col  ml-auto mr-60 mb-28 px-10 mt-16 h-auto  bg-authContainer rounded-lg border-2">
         <div className=" flex  flex-col justify-center px-8  py-9  items-center w-full ">
-          <h1 className="text-3xl font-medium  pb-2 font-libre ">Reset Password</h1>
+          <h1 className="text-3xl font-medium  pb-2 font-libre ">
+            Reset Password
+          </h1>
           <p className="text-center font-light">Create a new secure passwore</p>
         </div>
         <form className="bg-authContainer px-2 rounded  ">
-          <div className="relative flex items-center ">
+          <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
             <input
-              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
+                errors.Password ? "border-red-600" : "focus:border-headingColor"
+              }  focus:outline-none `}
               id="Password"
-              placeholder="New Password"
-              type="text"
+              {...register("Password")}
+              placeholder=" Your password"
+              type={visible ? "text" : "password"}
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
+            <span className="relative float-right -top-10 right-2.5 block cursor-pointer">
+              {
+                <FontAwesomeIcon
+                  icon={visible ? "eye" : "eye-slash"}
+                  onClick={() => setVisible(!visible)}
+                />
+              }
+            </span>
+            <div className="absolute inset-y-0 left-0 pl-4   flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -42,14 +103,25 @@ export default function ResetPassword() {
               </svg>
             </div>
           </div>
-          <div className="relative flex items-center mb-2 ">
+          {errors.Password && (
+            <p className="text-red-500 text-xs whitespace-pre-line pre-wrap">
+              {errors.Password.message}
+            </p>
+          )}
+          <div className={`relative ${errors.ConfirmPassword ? "" : "mb-5"}  `}>
             <input
-              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
+                errors.ConfirmPassword
+                  ? "border-red-600"
+                  : "focus:border-headingColor"
+              }  focus:outline-none `}
               id="Confirm Password"
-              placeholder="Confirm new Password"
-              type="text"
+              {...register("ConfirmPassword")}
+              placeholder=" Confirm password"
+              type={visible ? "text" : "password"}
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
+
+            <div className="absolute inset-y-0 left-0 pl-4   flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -67,6 +139,11 @@ export default function ResetPassword() {
               </svg>
             </div>
           </div>
+          {errors.ConfirmPassword && (
+            <p className="text-red-500 text-xs whitespace-pre-line pre-wrap">
+              {errors.ConfirmPassword.message}
+            </p>
+          )}
 
           <button
             type="submit"

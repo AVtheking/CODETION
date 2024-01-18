@@ -45,3 +45,20 @@ export const forgetSchema = yup.object().shape({
     .email("Please enter a valid email")
     .trim(),
 });
+export const resetSchema = yup.object().shape({
+  Password: yup
+    .string()
+    .required("Password is required")
+    .max(40, "Password must be at most 40 character")
+    .matches(
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+      "Password must contain at least 8 characters  one \n uppercase one number and one special case character"
+    )
+    .trim(),
+  ConfirmPassword: yup
+    .string()
+    .required("Confirm Password is required")
+    .max(40, "Password must be at most 40 character")
+    .oneOf([yup.ref('Password')], 'Passwords must match')
+    .trim(),
+});
