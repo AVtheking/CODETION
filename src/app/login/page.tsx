@@ -1,9 +1,58 @@
+"use client";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { yupResolver } from "@hookform/resolvers/yup";
+import axios, { AxiosResponse } from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { set, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import google from "../../../public/google.svg";
+import loadingIcon from "../../../public/loading.svg";
 import logo from "../../../public/logo.svg";
-import Button from "../Components/Button";
+import { baseUrl } from "../utils/constants";
+import { loginSchema } from "../utils/schema";
+
+library.add(faEye, faEyeSlash);
+library.add(faEye, faEyeSlash);
 export default function Login() {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  type IFormInput = {
+    Email: string;
+    Password: string;
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    resolver: yupResolver(loginSchema),
+    mode: "onChange",
+  });
+  const onSubmit = async (data: IFormInput) => {
+    setLoading(true);
+
+    console.log(data);
+    try {
+      const res: AxiosResponse = await axios.post(`${baseUrl}api/login/`, {
+        email: data.Email,
+        password: data.Password,
+      });
+      setLoading(false);
+      console.log(res.data);
+      if (res.data.success) {
+        toast.success("Login successfully");
+      }
+    } catch (e: any) {
+      setLoading(false);
+      toast.error(e.response.data.message);
+      console.log(e.response.data);
+    }
+  };
+
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -22,15 +71,21 @@ export default function Login() {
             Log in
           </h1>
         </div>
-        <form className="bg-authContainer px-2 rounded  ">
-          <div className="relative flex items-center">
+        <form
+          className="bg-authContainer px-2 rounded  "
+       
+        >
+          <div className={`relative ${errors.Email ? "" : "mb-5"} `}>
             <input
-              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              {...register("Email")}
+              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${
+                errors.Email ? "border-red-600" : "focus:border-headingColor"
+              }  focus:outline-none `}
               id="Email"
               placeholder="Email"
               type="text"
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4   flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -53,15 +108,29 @@ export default function Login() {
               </svg>
             </div>
           </div>
+          {errors.Email && (
+            <p className="text-red-500 text-sm">{errors.Email.message}</p>
+          )}
 
-          <div className="relative flex items-center">
+          <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
             <input
-              className="border rounded-md px-12 py-4 mb-5 bg-authContainer w-full  focus:border-headingColor  focus:outline-none "
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
+                errors.Password ? "border-red-600" : "focus:border-headingColor"
+              }  focus:outline-none `}
               id="Password"
+              {...register("Password")}
               placeholder=" Your password"
-              type="password"
+              type={visible ? "text" : "password"}
             ></input>
-            <div className="absolute inset-y-0 left-0 pl-4 pb-4  flex items-center pointer-events-none">
+            <span className="relative float-right -top-10 right-2.5 block cursor-pointer">
+              {
+                <FontAwesomeIcon
+                  icon={visible ? "eye" : "eye-slash"}
+                  onClick={() => setVisible(!visible)}
+                />
+              }
+            </span>
+            <div className="absolute inset-y-0 left-0 pl-4   flex items-center pointer-events-none">
               <svg
                 width="20"
                 height="20"
@@ -79,13 +148,28 @@ export default function Login() {
               </svg>
             </div>
           </div>
+          {errors.Password && (
+            <p className="text-red-500 text-xs whitespace-pre-line pre-wrap">
+              {errors.Password.message}
+            </p>
+          )}
         </form>
         <div className=" ml-auto mb-8 font-sans">
           <Link href="/login/forget_password">Forget your password?</Link>
         </div>
-        <Button buttonText={"Log In"} />
+        <button
+          type="submit"
+          onClick={handleSubmit(onSubmit)}
+          className="bg-headingColor flex justify-center items-center hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
+        >
+          {loading ? (
+            <Image src={loadingIcon} className="animate-spin" alt="Loading" />
+          ) : (
+            "Login"
+          )}
+        </button>
         <div className="flex justify-center w-full ">
-          <button className="flex  items-center border-2  border-headingColor rounded-lg pl-14 py-3 w-full">
+          <button className="flex justify-center items-center border-2  border-headingColor rounded-lg py-3 w-full">
             <Image src={google} alt="google" />
             <span className="text-lg pl-2 text-white">
               Continue with Google

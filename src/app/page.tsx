@@ -10,6 +10,7 @@ library.add(faEye, faEyeSlash);
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import cookie from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -17,8 +18,8 @@ import toast from "react-hot-toast";
 import google from "../../public/google.svg";
 import loadingIcon from "../../public/loading.svg";
 import logo from "../../public/logo.svg";
+import { baseUrl } from "./utils/constants";
 import { schema } from "./utils/schema";
-
 export default function SignUp() {
   const router = useRouter();
   const [visible, setVisible] = useState<boolean>(false);
@@ -29,7 +30,7 @@ export default function SignUp() {
     Email: string;
     Password: string;
   };
-  const baseUrl = "https://codetion.onrender.com/";
+
   const {
     register,
     handleSubmit,
@@ -38,14 +39,24 @@ export default function SignUp() {
 
   const onSubmit = async (data: FieldValues) => {
     console.log(data);
+    cookie.set("Email", data.Email);
     setLoading(true);
     try {
-      const res = await axios.post(`${baseUrl}api/register/`, {
-        username: data.Username,
-        email: data.Email,
-        password: data.Password,
-      });
+      const res = await axios.post(
+        `${baseUrl}api/register/`,
+        {
+          username: data.Username,
+          email: data.Email,
+          password: data.Password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setLoading(false);
+      toast.success("Otp sent to your email");
       console.log(res.data);
       if (res.data.success) {
         router.push("/verify_email");
@@ -114,15 +125,15 @@ export default function SignUp() {
                 />
               </svg>
             </div>
-            {errors.Username && (
-              <p className="text-red-500 text-sm">{errors.Username.message}</p>
-            )}
           </div>
+          {errors.Username && (
+            <p className="text-red-500 text-sm">{errors.Username.message}</p>
+          )}
 
           <div className={`relative ${errors.Email ? "" : "mb-5"} `}>
             <input
               {...register("Email")}
-              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
+              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${
                 errors.Email ? "border-red-600" : "focus:border-headingColor"
               }  focus:outline-none `}
               id="Email"
@@ -130,9 +141,7 @@ export default function SignUp() {
               type="text"
               // onChange={(e) => handleInputChange("Email",e.target.value)}
             ></input>
-            {errors.Email && (
-              <p className="text-red-500 text-sm">{errors.Email.message}</p>
-            )}
+
             <div className="absolute inset-y-0 left-0 pl-4 pb-4 pt-3  flex items-center pointer-events-none">
               <svg
                 width="20"
@@ -156,8 +165,11 @@ export default function SignUp() {
               </svg>
             </div>
           </div>
+          {errors.Email && (
+            <p className="text-red-500 text-sm">{errors.Email.message}</p>
+          )}
 
-          <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
+        <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
             <input
               {...register("Password")}
               className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
@@ -166,7 +178,6 @@ export default function SignUp() {
               id="Password"
               placeholder=" Your password"
               type={visible ? "text" : "password"}
-              // onChange={(e) => handleInputChange("Password",e.target.value)}
             ></input>
             <span className="relative float-right -top-10 right-2.5 block cursor-pointer">
               {
@@ -176,9 +187,7 @@ export default function SignUp() {
                 />
               }
             </span>
-            {errors.Password && (
-              <p className="text-red-500 text-sm">{errors.Password.message}</p>
-            )}
+
             <div className="absolute inset-y-0 left-0 pl-4 pb-4 pt-3  flex items-center pointer-events-none">
               <svg
                 width="20"
@@ -197,7 +206,11 @@ export default function SignUp() {
               </svg>
             </div>
           </div>
-
+          {errors.Password && (
+            <p className="text-red-500 text-xs whitespace-pre-line pre-wrap">
+              {errors.Password.message}
+            </p>
+          )}
           <div className="flex items-center px-2 text-start text-xs mb-10">
             <input
               className="mr-2 accent-authContainer bg-gray-700"

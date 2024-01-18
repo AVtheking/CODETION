@@ -10,9 +10,11 @@ import { useEffect, useRef, useState } from "react";
 export const OtpInput = ({
   numberOfDigits,
   onOtpComplete,
+  error
 }: {
   numberOfDigits: number;
-  onOtpComplete: (otp: string) => void;
+    onOtpComplete: (otp: string) => void;
+  error:string
 }) => {
   // State to hold the OTP digits
   const [otp, setOtp] = useState<string[]>(new Array(numberOfDigits).fill(""));
@@ -72,7 +74,9 @@ export const OtpInput = ({
           ref={(reference) =>
             reference && (otpBoxRefrence.current[index] = reference)
           }
-          className={`border w-12 h-auto text-white p-3 rounded-md block bg-transparent focus:border-2 focus:outline-none appearance-none`}
+          className={`border w-12 h-auto text-white p-3 rounded-md block bg-transparent focus:border-2 focus:outline-none appearance-none
+          
+          ${error ? "border-red-500" : "border-headingColor"}`}
         />
       ))}
     </div>

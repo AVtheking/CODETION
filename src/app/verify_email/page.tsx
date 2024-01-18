@@ -1,16 +1,69 @@
 "use client";
+import axios from "axios";
+import cookie from "js-cookie";
 import Image from "next/image";
-import logo from "../../../public/logo.svg";
-import Button from "../Components/Button";
-import { OtpInput } from "../Components/OtpInput";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-export default function Verify() {
-  const handleOtpComplete = (otp: string) => {
-    console.log(otp);
+import toast from "react-hot-toast";
+import loadingIcon from "../../../public/loading.svg";
+import logo from "../../../public/logo.svg";
+import { OtpInput } from "../Components/OtpInput";
+import { baseUrl } from "../utils/constants";
+import { set } from "react-hook-form";
 
+export default function Verify() {
+  const router = useRouter();
+  const [otp, setOtp] = useState<string>("");
+  const [otpError, setOtpError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const email = cookie.get("Email");
+
+  const handleOtpComplete = async (otp: string) => {
+    setOtp(otp);
+
+    console.log(otp);
   };
-  const [otpError, setOtpError] = useState<boolean>(false);
+  const verify = async () => {
+ 
+    console.log(email);
+    setLoading(true);
+    try {
+      const res = await axios.post(`${baseUrl}api/verify/`, {
+        email,
+        otp,
+      });
+      console.log(res.data);
+      setLoading(false);
+      if (res.data.success) {
+        toast.success("Email verified successfully");
+        // router.push("/home");
+      }
+    } catch (e: any) {
+      setLoading(false);
+      setOtpError("Incorrect OTP,Please check and try again");
+      toast.error("Otp is invalid");
+      console.log(e.response.data);
+    }
+  };
+  const resendOtp=async () => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${baseUrl}api/resend-otp/`, {
+        email
+      })
+      console.log(res);
+      setLoading(false);
+      if (res.data.success) {
+        toast.success("Otp sent successfully");
+      }
+    }
+    catch (e:any) {
+      setLoading(false);
+      toast.error("Network Error")
+      console.log(e.response.data.message);
+    }
+  }
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -28,20 +81,37 @@ export default function Verify() {
             <br /> registered email
           </p>
         </div>
-        <OtpInput numberOfDigits={6} onOtpComplete={handleOtpComplete} />
-        <div className=" ml-auto mr-auto mb-5 font-sans font-bold pt-7  text-headingColor">
+        <OtpInput
+          numberOfDigits={6}
+          onOtpComplete={handleOtpComplete}
+          error={otpError}
+        />
+        {otpError && (
+          <div className="text-red-500 text-sm font-semibold">{otpError}</div>
+        )}
+        <div className=" ml-auto mr-auto mb-5 font-sans font-bold pt-7 cursor-pointer text-headingColor"
+        onClick={resendOtp}>
           Resend OTP
         </div>
-        <Button buttonText={"Verify"} />
+        <button
+          className= "flex justify-center items-center bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3  mb-6 px-4 rounded-lg"
+          onClick={verify}
+        >
+          {loading ? (
+            <Image src={loadingIcon} className="animate-spin" alt="Loading" />
+          ) : (
+            "Verfiy"
+          )}
+        </button>
         <Link href="/">
-        <div className="flex justify-center w-full ">
-          <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
-            <span className="text-xl font-semibold   text-headingColor">
-              Back to Sign Up
-            </span>
-          </button>
+          <div className="flex justify-center w-full ">
+            <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
+              <span className="text-xl font-semibold   text-headingColor">
+                Back to Sign Up
+              </span>
+            </button>
           </div>
-          </Link>
+        </Link>
       </div>
     </div>
   );
