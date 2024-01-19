@@ -35,7 +35,7 @@ export default function ForgetPassword() {
       setLoading(false);
       console.log(res.data);
       if (res.data.success) {
-        toast.success("OTp sent to your email");
+        toast.success("Reset Link sent to registered email");
         router.push("/login/reset_password");
       }
     } catch (e: any) {
