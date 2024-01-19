@@ -20,11 +20,25 @@ import loadingIcon from "../../public/loading.svg";
 import logo from "../../public/logo.svg";
 import { baseUrl } from "./utils/constants";
 import { schema } from "./utils/schema";
+import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
+
 export default function SignUp() {
   const router = useRouter();
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const googleauth = useGoogleLogin({
+    onSuccess: codeResponse => {
+      console.log(codeResponse.access_token);
+      axios.post('http://127.0.0.1:8000/api/google/', { access_token: codeResponse.access_token })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  });
   type IFormInput = {
     Username: string;
     Email: string;
@@ -69,6 +83,7 @@ export default function SignUp() {
     }
   };
 
+
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -94,13 +109,12 @@ export default function SignUp() {
           <div className={`relative ${errors.Username ? "" : "mb-5"} `}>
             <input
               {...register("Username")}
-              className={`border rounded-md px-12 py-4 bg-authContainer w-full  ${
-                errors.Username ? "border-red-600" : "focus:border-headingColor"
-              }  focus:outline-none `}
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full  ${errors.Username ? "border-red-600" : "focus:border-headingColor"
+                }  focus:outline-none `}
               id="Username"
               placeholder="Username"
               type="text"
-              // onChange={(e) => handleInputChange("Username",e.target.value)}
+            // onChange={(e) => handleInputChange("Username",e.target.value)}
             />
 
             <div className="absolute inset-y-0 left-0 pl-4 pb-4 pt-3 flex items-center pointer-events-none">
@@ -133,13 +147,12 @@ export default function SignUp() {
           <div className={`relative ${errors.Email ? "" : "mb-5"} `}>
             <input
               {...register("Email")}
-              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${
-                errors.Email ? "border-red-600" : "focus:border-headingColor"
-              }  focus:outline-none `}
+              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${errors.Email ? "border-red-600" : "focus:border-headingColor"
+                }  focus:outline-none `}
               id="Email"
               placeholder="Email"
               type="text"
-              // onChange={(e) => handleInputChange("Email",e.target.value)}
+            // onChange={(e) => handleInputChange("Email",e.target.value)}
             ></input>
 
             <div className="absolute inset-y-0 left-0 pl-4 pb-4 pt-3  flex items-center pointer-events-none">
@@ -169,12 +182,11 @@ export default function SignUp() {
             <p className="text-red-500 text-sm">{errors.Email.message}</p>
           )}
 
-        <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
+          <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
             <input
               {...register("Password")}
-              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
-                errors.Password ? "border-red-600" : "focus:border-headingColor"
-              }  focus:outline-none `}
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${errors.Password ? "border-red-600" : "focus:border-headingColor"
+                }  focus:outline-none `}
               id="Password"
               placeholder=" Your password"
               type={visible ? "text" : "password"}
@@ -235,9 +247,8 @@ export default function SignUp() {
               "Create an account"
             )}
           </button>
-
           <div className="flex justify-center w-full ">
-            <button className="flex  items-center border-2  border-headingColor rounded-lg pl-14 py-3 w-full">
+            <button className="flex  items-center border-2  border-headingColor rounded-lg pl-14 py-3 w-full " onClick={() => googleauth()}>
               <Image src={google} alt="google" />
               <span className="text-lg pl-2 text-white">
                 Continue with Google

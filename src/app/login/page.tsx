@@ -14,10 +14,23 @@ import loadingIcon from "../../../public/loading.svg";
 import logo from "../../../public/logo.svg";
 import { baseUrl } from "../utils/constants";
 import { loginSchema } from "../utils/schema";
+import { useGoogleLogin } from '@react-oauth/google';
 
 library.add(faEye, faEyeSlash);
 library.add(faEye, faEyeSlash);
 export default function Login() {
+  const googleauth = useGoogleLogin({
+    onSuccess: codeResponse => {
+      console.log(codeResponse.access_token);
+      axios.post('http://127.0.0.1:8000/api/google/', { access_token: codeResponse.access_token })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  });
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   type IFormInput = {
@@ -73,14 +86,13 @@ export default function Login() {
         </div>
         <form
           className="bg-authContainer px-2 rounded  "
-       
+
         >
           <div className={`relative ${errors.Email ? "" : "mb-5"} `}>
             <input
               {...register("Email")}
-              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${
-                errors.Email ? "border-red-600" : "focus:border-headingColor"
-              }  focus:outline-none `}
+              className={`border  rounded-md px-12 py-4 bg-authContainer w-full ${errors.Email ? "border-red-600" : "focus:border-headingColor"
+                }  focus:outline-none `}
               id="Email"
               placeholder="Email"
               type="text"
@@ -114,9 +126,8 @@ export default function Login() {
 
           <div className={`relative ${errors.Password ? "" : "mb-5"}  `}>
             <input
-              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${
-                errors.Password ? "border-red-600" : "focus:border-headingColor"
-              }  focus:outline-none `}
+              className={`border rounded-md px-12 py-4 bg-authContainer w-full ${errors.Password ? "border-red-600" : "focus:border-headingColor"
+                }  focus:outline-none `}
               id="Password"
               {...register("Password")}
               placeholder=" Your password"
@@ -169,7 +180,7 @@ export default function Login() {
           )}
         </button>
         <div className="flex justify-center w-full ">
-          <button className="flex justify-center items-center border-2  border-headingColor rounded-lg py-3 w-full">
+          <button className="flex justify-center items-center border-2  border-headingColor rounded-lg py-3 w-full" onClick={() => googleauth()}>
             <Image src={google} alt="google" />
             <span className="text-lg pl-2 text-white">
               Continue with Google

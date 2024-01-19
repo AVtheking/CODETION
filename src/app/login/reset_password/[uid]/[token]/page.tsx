@@ -11,11 +11,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import logo from "../../../../public/logo.svg";
+import logo from "../../../../../../public/logo.svg";
+import { useParams } from "next/navigation";
 
 library.add(faEye, faEyeSlash);
 library.add(faEye, faEyeSlash);
 export default function ResetPassword() {
+  const { uid, token } = useParams();
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   type IFormInput = {
@@ -35,7 +37,7 @@ export default function ResetPassword() {
     setLoading(true);
     console.log(data);
     try {
-      const res = await axios.post(`${baseUrl}api//`, {
+      const res = await axios.post(`${baseUrl}api/password-reset-confirm/${uid}/${token}/`, {
         password: data.Password,
       });
       setLoading(false);
@@ -147,6 +149,7 @@ export default function ResetPassword() {
 
           <button
             type="submit"
+            onClick={handleSubmit(onSubmit)}
             className="bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
           >
             Reset
