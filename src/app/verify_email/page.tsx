@@ -10,13 +10,13 @@ import loadingIcon from "../../../public/loading.svg";
 import logo from "../../../public/logo.svg";
 import { OtpInput } from "../Components/OtpInput";
 import { baseUrl } from "../utils/constants";
-import { set } from "react-hook-form";
 
 export default function Verify() {
   const router = useRouter();
   const [otp, setOtp] = useState<string>("");
   const [otpError, setOtpError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [isResendDisabled, setIsResendDisabled] = useState<boolean>(false);
   const email = cookie.get("Email");
 
   const handleOtpComplete = async (otp: string) => {
@@ -25,7 +25,6 @@ export default function Verify() {
     console.log(otp);
   };
   const verify = async () => {
- 
     console.log(email);
     setLoading(true);
     try {
@@ -46,24 +45,31 @@ export default function Verify() {
       console.log(e.response.data);
     }
   };
-  const resendOtp=async () => {
+  const resendOtp = async () => {
+    setIsResendDisabled(true);
+    if (isResendDisabled) {
+      return;
+    }
     setLoading(true);
     try {
       const res = await axios.post(`${baseUrl}api/resend-otp/`, {
-        email
-      })
+        email,
+      });
       console.log(res);
       setLoading(false);
       if (res.data.success) {
         toast.success("Otp sent successfully");
       }
-    }
-    catch (e:any) {
+    } catch (e: any) {
       setLoading(false);
-      toast.error("Network Error")
+      toast.error("Network Error");
       console.log(e.response.data.message);
     }
-  }
+    
+    setTimeout(() => {
+      setIsResendDisabled(false);
+    }, 60000);
+  };
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
       <div className="ml-10 mt-6 items-start   flex flex-row">
@@ -89,12 +95,16 @@ export default function Verify() {
         {otpError && (
           <div className="text-red-500 text-sm font-semibold">{otpError}</div>
         )}
-        <div className=" ml-auto mr-auto mb-5 font-sans font-bold pt-7 cursor-pointer text-headingColor"
-        onClick={resendOtp}>
+        <div
+          className={`ml-auto mr-auto mb-5 font-sans font-bold pt-7 cursor-pointer text-headingColor ${
+            isResendDisabled ? "opacity-50" : ""
+          }`}
+          onClick={!isResendDisabled ? resendOtp : undefined}
+        >
           Resend OTP
         </div>
         <button
-          className= "flex justify-center items-center bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3  mb-6 px-4 rounded-lg"
+          className="flex justify-center items-center bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3  mb-6 px-4 rounded-lg"
           onClick={verify}
         >
           {loading ? (
@@ -105,7 +115,10 @@ export default function Verify() {
         </button>
         <Link href="/">
           <div className="flex justify-center w-full ">
-            <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
+            <button
+              disabled={loading}
+              className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full"
+            >
               <span className="text-xl font-semibold   text-headingColor">
                 Back to Sign Up
               </span>

@@ -103,6 +103,7 @@ export default function ForgetPassword() {
           )}
           <button
             type="submit"
+            disabled={loading}
             className="flex justify-center items-center bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
           >
             {loading ? (
@@ -113,7 +114,10 @@ export default function ForgetPassword() {
           </button>
           <Link href="/login">
             <div className="flex justify-center w-full ">
-              <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
+              <button
+                disabled={loading}
+                className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full"
+              >
                 <span className="text-xl font-semibold   text-headingColor">
                   Back to log In
                 </span>

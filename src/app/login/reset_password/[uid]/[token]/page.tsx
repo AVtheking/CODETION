@@ -8,11 +8,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import logo from "../../../../../../public/logo.svg";
-import { useParams } from "next/navigation";
 
 library.add(faEye, faEyeSlash);
 library.add(faEye, faEyeSlash);
@@ -37,9 +37,12 @@ export default function ResetPassword() {
     setLoading(true);
     console.log(data);
     try {
-      const res = await axios.post(`${baseUrl}api/password-reset-confirm/${uid}/${token}/`, {
-        password: data.Password,
-      });
+      const res = await axios.post(
+        `${baseUrl}api/password-reset-confirm/${uid}/${token}/`,
+        {
+          password: data.Password,
+        }
+      );
       setLoading(false);
       console.log(res.data);
       if (res.data.success) {
@@ -50,7 +53,6 @@ export default function ResetPassword() {
       toast.error(e.response.data.message);
       console.log(e.response.data);
     }
-    // setLoading(false);
   };
   return (
     <div className="flex h-full w-full  bg-backgroundColor bg-[url('../../public/bg.png')] bg-cover">
@@ -149,6 +151,7 @@ export default function ResetPassword() {
 
           <button
             type="submit"
+            disabled={loading}
             onClick={handleSubmit(onSubmit)}
             className="bg-headingColor hover:bg-headingColor text-lg  text-white font-bold py-3 w-full mb-6 px-4 rounded-lg"
           >
@@ -156,7 +159,10 @@ export default function ResetPassword() {
           </button>
           <Link href="/login">
             <div className="flex justify-center w-full ">
-              <button className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full">
+              <button
+                disabled={loading}
+                className="flex justify-center items-center border-2  border-headingColor rounded-lg  py-3 w-full"
+              >
                 <span className="text-xl font-semibold   text-headingColor">
                   Back to log In
                 </span>
