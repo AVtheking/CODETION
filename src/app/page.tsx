@@ -30,7 +30,7 @@ export default function SignUp() {
   const googleauth = useGoogleLogin({
     onSuccess: codeResponse => {
       console.log(codeResponse.access_token);
-      axios.post(`${baseUrl}/api/google/`, { access_token: codeResponse.access_token })
+      axios.post(`${baseUrl}api/google/`, { access_token: codeResponse.access_token })
         .then((response) => {
           console.log(response.data);
         })
