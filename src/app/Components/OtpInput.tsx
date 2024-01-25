@@ -74,7 +74,7 @@ export const OtpInput = ({
           ref={(reference) =>
             reference && (otpBoxRefrence.current[index] = reference)
           }
-          className={`border w-12 h-auto text-white p-3 rounded-md block bg-transparent focus:border-2 focus:outline-none appearance-none
+          className={`  border w-12 h-auto text-white p-3 rounded-md block bg-transparent focus:border-2 focus:outline-none appearance-none  text-center
           
           ${error ? "border-red-500" : "border-headingColor"}`}
         />
