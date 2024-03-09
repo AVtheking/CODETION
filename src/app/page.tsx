@@ -80,9 +80,10 @@ export default function SignUp() {
       }
     } catch (e: any) {
       setLoading(false);
+      console.log(e.response.data)
       toast.error(e.response.data.message);
 
-      console.log(e.response.data);
+      // console.log(e.response.data);
     }
   };
 
